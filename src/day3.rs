@@ -35,8 +35,8 @@ impl DayRunner for Day3 {
                 let key = (gear.1, gear.2);
 
                 match gears.get_mut(&key) {
-                    Some(partsOnGear) => {
-                        partsOnGear.push(part.part_number);
+                    Some(parts_on_gear) => {
+                        parts_on_gear.push(part.part_number);
                     }
                     None => {
                         gears.insert(key, vec![part.part_number]);
@@ -94,7 +94,6 @@ fn extract_parts(lines: Vec<String>) -> Vec<Part> {
                 }
             } else {
                 if started {
-                    started = false;
                     let str: String = line[(start_index as usize)..(char_index as usize)].iter().collect();
                     
                     let touching_symbols = get_touching_symbols(line_number, start_index, char_index - 1, &char_lines);
