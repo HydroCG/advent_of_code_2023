@@ -7,7 +7,7 @@ pub struct Day3;
 
 struct Part {
     part_number: u32,
-    touching: Vec<(char, u32, u32)>
+    touching: Vec<(char, usize, usize)>
 }
 
 impl DayRunner for Day3 {
@@ -26,7 +26,7 @@ impl DayRunner for Day3 {
     fn run_p2(&self, lines: Vec<String>) {
 
         let parts = extract_parts(lines);
-        let mut gears: HashMap<(u32, u32), Vec<u32>> = HashMap::new();
+        let mut gears: HashMap<(usize, usize), Vec<u32>> = HashMap::new();
         
         for part in &parts {
             
@@ -43,7 +43,6 @@ impl DayRunner for Day3 {
                     }
                 }
             }
-
         }
 
         let mut sum = 0;
@@ -71,30 +70,26 @@ fn extract_parts(lines: Vec<String>) -> Vec<Part> {
 
     char_lines.push(".".repeat(lines[1].chars().count() + 2).chars().collect());
 
-    let mut line_number: i32 = -1;
+    let mut line_number: usize = 0;
     let mut parts: Vec<Part> = vec![];
 
     for line in &char_lines {
-        line_number += 1;
 
-        let mut started = false;
+        let mut reading_number = false;
         let mut start_index = 0;
-        let mut char_index = -1;
+        let mut char_index = 0;
 
         for character in line {
-            char_index += 1;
             
             if character.is_alphanumeric() {
 
-                if started {
-                    continue;
-                } else {
-                    started = true;
+                if !reading_number {
+                    reading_number = true;
                     start_index = char_index;
                 }
             } else {
-                if started {
-                    let str: String = line[(start_index as usize)..(char_index as usize)].iter().collect();
+                if reading_number {
+                    let str: String = line[start_index..char_index].iter().collect();
                     
                     let touching_symbols = get_touching_symbols(line_number, start_index, char_index - 1, &char_lines);
 
@@ -105,26 +100,30 @@ fn extract_parts(lines: Vec<String>) -> Vec<Part> {
                         });
                     }
 
-                    started = false;
+                    reading_number = false;
                     start_index = 0;
                 }
             }
+
+            char_index += 1;
         }
+
+        line_number += 1;
     }
 
     return parts;
 }
 
-fn get_touching_symbols(line_number: i32, start: i32, end: i32, lines: &Vec<Vec<char>>) -> Vec<(char, u32,u32)> {
+fn get_touching_symbols(line_number: usize, start: usize, end: usize, lines: &Vec<Vec<char>>) -> Vec<(char, usize, usize)> {
 
-    let mut results: Vec<(char, u32,u32)> = vec![];
+    let mut results: Vec<(char, usize, usize)> = vec![];
 
     for x in start-1..end + 2 { // end is exclusive.....
         for y in line_number-1..line_number+2 {
-            let char = lines[y as usize][x as usize];
+            let char = lines[y][x];
             
             if !char.is_alphanumeric() && char != '.' {
-                results.push((char, y as u32, x as u32));
+                results.push((char, y, x));
             }
         }
     }
