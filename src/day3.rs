@@ -122,12 +122,9 @@ fn get_touching_symbols(line_number: i32, start: i32, end: i32, lines: &Vec<Vec<
 
     for x in start-1..end + 2 { // end is exclusive.....
         for y in line_number-1..line_number+2 {
-            // println!("{}, {}", x, y);
             let char = lines[y as usize][x as usize];
             
             if !char.is_alphanumeric() && char != '.' {
-                println!("Matched on symbol {} LN {}", char, line_number+1);
-
                 results.push((char, y as u32, x as u32));
             }
         }
