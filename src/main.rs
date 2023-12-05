@@ -5,13 +5,14 @@ mod day_runner;
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 fn main() {
     use std::time::Instant;
     let now = Instant::now();
 
-    let day3 = day3::Day3{}; 
-    run(&day3, 3);
+    let day4 = day4::Day4{}; 
+    run(&day4, 4);
 
     let elapsed = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);
