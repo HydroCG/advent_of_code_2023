@@ -1,4 +1,4 @@
-use std::{collections::VecDeque};
+use std::collections::VecDeque;
 
 use crate::day_runner::DayRunner;
 
@@ -64,7 +64,6 @@ fn get_race_data_pt2(lines: Vec<String>) -> Vec<Race> {
         distance: l2
     }];
 }
-
 
 fn get_race_data(lines: Vec<String>) -> Vec<Race> {
 
