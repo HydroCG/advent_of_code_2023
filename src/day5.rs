@@ -45,7 +45,7 @@ impl DayRunner for Day5 {
 
         let maps = read_maps(&lines);
 
-        let mut pairs: Vec<(i64, i64)> = Vec::new();
+        let _pairs: Vec<(i64, i64)> = Vec::new();
         let mut min = i64::MAX;
 
         while seeds_ranges.len() > 0 {
@@ -58,7 +58,7 @@ impl DayRunner for Day5 {
                 .min()
                 .unwrap();
 
-            if (new_min < min) {
+            if new_min < min {
                 min = new_min;
             }
         }

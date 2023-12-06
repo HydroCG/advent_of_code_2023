@@ -30,7 +30,7 @@ impl DayRunner for Day4 {
         let scores: Vec<usize> = get_card_matches(&lines);
 
         let mut ticket_count = 0;
-        let mut scratchcard_counts: Vec<usize> = (0..lines.len()).map(|i|1).collect::<Vec<_>>();
+        let mut scratchcard_counts: Vec<usize> = (0..lines.len()).map(|_i|1).collect::<Vec<_>>();
 
         for scratchcard_number in 0..scratchcard_counts.len() {
             let cards_held = scratchcard_counts[scratchcard_number];
