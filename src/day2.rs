@@ -1,8 +1,6 @@
 use core::panic;
 use std::collections::HashMap;
 
-use crate::day_runner::DayRunner;
-
 #[derive(Debug)]
 pub struct Day2 {}
 
@@ -11,59 +9,60 @@ struct HandResult {
     color: String
 }
 
-impl DayRunner for Day2 {
-    fn run_p1(&self, lines: Vec<String>) {
-        let mut sum = 0;
-        let mut game_id = 0;
+#[allow(dead_code)]
+fn run_p1(lines: Vec<String>) -> u32 {
+    let mut sum = 0;
+    let mut game_id = 0;
 
-        for line in lines {
-            game_id += 1;
+    for line in lines {
+        game_id += 1;
 
-            let mut is_possible = true;
-            for hand_result in iterate_results(line) {
+        let mut is_possible = true;
+        for hand_result in iterate_results(line) {
 
-                if hand_result.amount > match hand_result.color.as_str() {
-                    "red" => 12,
-                    "green" => 13,
-                    "blue" => 14,
-                    _ => panic!("Unknown color")
-                } {
-                    is_possible = false;
-                    break;
-                }
-            }
-
-            if is_possible {
-                sum += game_id;
+            if hand_result.amount > match hand_result.color.as_str() {
+                "red" => 12,
+                "green" => 13,
+                "blue" => 14,
+                _ => panic!("Unknown color")
+            } {
+                is_possible = false;
+                break;
             }
         }
 
-        println!("Result: {sum}");
-    }
-
-    fn run_p2(&self, lines: Vec<String>) {
-        let mut sum = 0;
-
-        for line in lines {
-
-            let mut results: HashMap<String, u32> = vec![
-                ("red".to_string(), 0),
-                ("green".to_string(), 0),
-                ("blue".to_string(), 0)
-            ].into_iter().collect();
-
-            for hand_result in iterate_results(line) {
-                if hand_result.amount > results[&hand_result.color] {
-                    results.insert(hand_result.color, hand_result.amount);
-                }
-            }
-
-            sum += results.values().product::<u32>();
+        if is_possible {
+            sum += game_id;
         }
-
-        println!("Product of all games: {}", sum);
     }
+
+    sum
 }
+
+#[allow(dead_code)]
+fn run_p2(lines: Vec<String>) -> u32 {
+    let mut sum = 0;
+
+    for line in lines {
+
+        let mut results: HashMap<String, u32> = vec![
+            ("red".to_string(), 0),
+            ("green".to_string(), 0),
+            ("blue".to_string(), 0)
+        ].into_iter().collect();
+
+        for hand_result in iterate_results(line) {
+            if hand_result.amount > results[&hand_result.color] {
+                results.insert(hand_result.color, hand_result.amount);
+            }
+        }
+
+        sum += results.values().product::<u32>();
+    }
+
+    sum
+}
+
 
 fn iterate_results(game: String) -> impl Iterator<Item = HandResult> {
     let trimmed_game = game.split(":").nth(1).unwrap().replace(";", ",");
@@ -77,4 +76,21 @@ fn iterate_results(game: String) -> impl Iterator<Item = HandResult> {
 
         HandResult { amount, color }
     }).collect::<Vec<_>>().into_iter()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_run_p1() {
+        let result = run_p1(crate::utils::read_input(2));
+        assert_eq!(result, 2331);
+    }
+
+    #[test]
+    fn test_run_p2() {
+        let result = run_p2(crate::utils::read_input(2));
+        assert_eq!(result, 71585);
+    }
 }

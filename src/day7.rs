@@ -1,7 +1,4 @@
-use crate::day_runner::DayRunner;
 use std::collections::HashMap;
-
-pub struct Day7 {}
 
 pub struct Hand {
     bet: u32,
@@ -17,57 +14,57 @@ impl Hand {
     }
 }
 
-impl DayRunner for Day7 {
-    fn run_p1(&self, lines: Vec<String>) {
-        let mut games = lines
-            .iter()
-            .map(|i| i.split_whitespace().collect::<Vec<_>>())
-            .map(|split| {
-                let cards: String = split[0].to_owned();
-                let bet = split[1].parse::<u32>().unwrap();
-                let value = get_hand_value(&cards);
+#[allow(dead_code)]
+fn run_p1(lines: Vec<String>) -> u32 {
+    let mut games = lines
+        .iter()
+        .map(|i| i.split_whitespace().collect::<Vec<_>>())
+        .map(|split| {
+            let cards: String = split[0].to_owned();
+            let bet = split[1].parse::<u32>().unwrap();
+            let value = get_hand_value(&cards);
 
-                Hand::new(bet, value)
-            })
-            .collect::<Vec<_>>();
+            Hand::new(bet, value)
+        })
+        .collect::<Vec<_>>();
 
-        games.sort_by(|a, b| a.value.cmp(&b.value));
+    games.sort_by(|a, b| a.value.cmp(&b.value));
 
-        let mut winnings = 0;
-        let mut game_id = 0;
+    let mut winnings = 0;
+    let mut game_id = 0;
 
-        for game in games {
-            game_id += 1;
-            winnings += game_id * game.bet;
-        }
-
-        println!("Winnings: {}", winnings);
+    for game in games {
+        game_id += 1;
+        winnings += game_id * game.bet;
     }
 
-    fn run_p2(&self, lines: Vec<String>) {
-        let mut games = lines
-            .iter()
-            .map(|i| i.split_whitespace().collect::<Vec<_>>())
-            .map(|split| {
-                let cards = split[0].to_owned();
-                let bet = split[1].parse::<u32>().unwrap();
-                let (_, hand_value) = resolve_wildcards(&cards, &cards);
-                Hand::new(bet, hand_value)
-            })
-            .collect::<Vec<_>>();
+    winnings
+}
 
-        games.sort_by(|a, b| a.value.cmp(&b.value));
+#[allow(dead_code)]
+fn run_p2(lines: Vec<String>) -> u32 {
+    let mut games = lines
+        .iter()
+        .map(|i| i.split_whitespace().collect::<Vec<_>>())
+        .map(|split| {
+            let cards = split[0].to_owned();
+            let bet = split[1].parse::<u32>().unwrap();
+            let (_, hand_value) = resolve_wildcards(&cards, &cards);
+            Hand::new(bet, hand_value)
+        })
+        .collect::<Vec<_>>();
 
-        let mut winnings = 0;
-        let mut game_id = 0;
+    games.sort_by(|a, b| a.value.cmp(&b.value));
 
-        for game in games {
-            game_id += 1;
-            winnings += game_id * game.bet;
-        }
+    let mut winnings = 0;
+    let mut game_id = 0;
 
-        println!("Winnings: {}", winnings);
+    for game in games {
+        game_id += 1;
+        winnings += game_id * game.bet;
     }
+
+    winnings
 }
 
 fn resolve_wildcards(cards_for_pairs: &str, cards_for_values: &str) -> (String, u64) {
@@ -206,5 +203,22 @@ fn get_card_strength_pt2(card: char) -> u32 {
         '2' => 2,
         'J' => 1,
         _ => 0,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_run_p1() {
+        let result = run_p1(crate::utils::read_input(7));
+        assert_eq!(result, 250120186);
+    }
+
+    #[test]
+    fn test_run_p2() {
+        let result = run_p2(crate::utils::read_input(7));
+        assert_eq!(result, 250665248);
     }
 }

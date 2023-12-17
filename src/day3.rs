@@ -1,62 +1,59 @@
-// Note: CRIMES WERE COMMITTED ON THIS DAY. THIS AIN'T RIGHT MAN...
-
 use std::{vec, collections::HashMap};
-use crate::day_runner::DayRunner;
-
-pub struct Day3;
 
 struct Part {
     part_number: u32,
     touching: Vec<(char, usize, usize)>
 }
 
-impl DayRunner for Day3 {
-    fn run_p1(&self, lines: Vec<String>) {
-        
-        let parts = extract_parts(lines);
-        let mut sum = 0;
+#[allow(dead_code)]
+fn run_p1(lines: Vec<String>) -> u32 {
+    
+    let parts = extract_parts(lines);
+    let mut sum = 0;
 
-        for part in &parts {
-            sum += part.part_number;
-        }
-
-        println!("Result: {}", sum);
+    for part in &parts {
+        sum += part.part_number;
     }
 
-    fn run_p2(&self, lines: Vec<String>) {
+    println!("Result: {}", sum);
 
-        let parts = extract_parts(lines);
-        let mut gears: HashMap<(usize, usize), Vec<u32>> = HashMap::new();
+    sum
+}
+
+#[allow(dead_code)]
+fn run_p2(lines: Vec<String>) -> u32{
+
+    let parts = extract_parts(lines);
+    let mut gears: HashMap<(usize, usize), Vec<u32>> = HashMap::new();
+    
+    for part in &parts {
         
-        for part in &parts {
-            
-            for gear in (&part).touching.iter().filter(|gear|gear.0 == '*') {
+        for gear in (&part).touching.iter().filter(|gear|gear.0 == '*') {
 
-                let key = (gear.1, gear.2);
+            let key = (gear.1, gear.2);
 
-                match gears.get_mut(&key) {
-                    Some(parts_on_gear) => {
-                        parts_on_gear.push(part.part_number);
-                    }
-                    None => {
-                        gears.insert(key, vec![part.part_number]);
-                    }
+            match gears.get_mut(&key) {
+                Some(parts_on_gear) => {
+                    parts_on_gear.push(part.part_number);
+                }
+                None => {
+                    gears.insert(key, vec![part.part_number]);
                 }
             }
         }
-
-        let mut sum = 0;
-
-        for adjacents in gears.values().into_iter() {
-            if adjacents.len() == 2 {
-                sum += adjacents.iter().product::<u32>();
-            }
-        }
-
-        println!("Result {}", sum);
     }
 
+    let mut sum = 0;
+
+    for adjacents in gears.values().into_iter() {
+        if adjacents.len() == 2 {
+            sum += adjacents.iter().product::<u32>();
+        }
+    }
+
+    sum
 }
+
 
 fn extract_parts(lines: Vec<String>) -> Vec<Part> { 
 
@@ -129,4 +126,21 @@ fn get_touching_symbols(line_number: usize, start: usize, end: usize, lines: &Ve
     }
 
     return results;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_run_p1() {
+        let result = run_p1(crate::utils::read_input(3));
+        assert_eq!(result, 544433);
+    }
+
+    #[test]
+    fn test_run_p2() {
+        let result = run_p2(crate::utils::read_input(3));
+        assert_eq!(result, 76314915);
+    }
 }

@@ -1,27 +1,23 @@
 use std::collections::VecDeque;
 
-use crate::day_runner::DayRunner;
-
-pub struct Day6 {}
-
 struct Race {
     time: u64,
     distance: u64
 }
 
-impl DayRunner for Day6 {
-    fn run_p1(&self, lines: Vec<String>) {
-        let races = get_race_data(lines);
-        solve_race(races);
-    }
-
-    fn run_p2(&self, lines: Vec<String>) {
-        let races = get_race_data_pt2(lines);
-        solve_race(races);
-    }
+#[allow(dead_code)]
+fn run_p1(lines: Vec<String>) -> i32 {
+    let races = get_race_data(lines);
+    solve_race(races)
 }
 
-fn solve_race(races: Vec<Race>) {
+#[allow(dead_code)]
+fn run_p2(lines: Vec<String>) -> i32 {
+    let races = get_race_data_pt2(lines);
+    solve_race(races)
+}
+
+fn solve_race(races: Vec<Race>) -> i32 {
 
     let mut i = 0;
     let mut total_possibilities: i32 = 1;
@@ -52,7 +48,7 @@ fn solve_race(races: Vec<Race>) {
         println!("{} possibilities for race {}", possibilities, i);
     }
 
-    println!("Total Possibilities {}", total_possibilities);
+    total_possibilities
 }
 
 fn get_race_data_pt2(lines: Vec<String>) -> Vec<Race> {
@@ -82,4 +78,21 @@ fn get_race_data(lines: Vec<String>) -> Vec<Race> {
     }
 
     return races;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_run_p1() {
+        let result = run_p1(crate::utils::read_input(6));
+        assert_eq!(result, 2269432);
+    }
+
+    #[test]
+    fn test_run_p2() {
+        let result = run_p2(crate::utils::read_input(6));
+        assert_eq!(result, 35865985);
+    }
 }

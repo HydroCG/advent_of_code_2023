@@ -1,54 +1,49 @@
 use std::collections::HashSet;
 
-use crate::day_runner::DayRunner;
+#[allow(dead_code)]
 
-pub struct Day4 {}
+fn run_p1(lines: Vec<String>) -> u32 {
+    let scores: Vec<usize> = get_card_matches(&lines);
 
-impl DayRunner for Day4 {
-    fn run_p1(&self, lines: Vec<String>) {
-        let scores: Vec<usize> = get_card_matches(&lines);
+    let mut total_score = 0;
 
-        let mut total_score = 0;
+    for matches in scores {
+        if matches > 0 {
+            let mut game_score = 1;
 
-        for matches in scores {
-
-            if matches > 0 {
-                let mut game_score = 1;
-
-                for _i in 1..matches {
-                    game_score *= 2;
-                }
-
-                total_score += game_score;
+            for _i in 1..matches {
+                game_score *= 2;
             }
-        }
 
-        println!("Game Score: {}", total_score);
+            total_score += game_score;
+        }
     }
 
-    fn run_p2(&self, lines: Vec<String>) {
-        let scores: Vec<usize> = get_card_matches(&lines);
+    return total_score;
+}
 
-        let mut ticket_count = 0;
-        let mut scratchcard_counts: Vec<usize> = (0..lines.len()).map(|_i|1).collect::<Vec<_>>();
+#[allow(dead_code)]
+fn run_p2(lines: Vec<String>) -> usize {
+    let scores: Vec<usize> = get_card_matches(&lines);
 
-        for scratchcard_number in 0..scratchcard_counts.len() {
-            let cards_held = scratchcard_counts[scratchcard_number];
-            ticket_count += cards_held;
-            
-            let match_count = scores[scratchcard_number];
+    let mut ticket_count = 0;
+    let mut scratchcard_counts: Vec<usize> = (0..lines.len()).map(|_i| 1).collect::<Vec<_>>();
 
-            for i in 0..match_count {
+    for scratchcard_number in 0..scratchcard_counts.len() {
+        let cards_held = scratchcard_counts[scratchcard_number];
+        ticket_count += cards_held;
 
-                let won_number = scratchcard_number + i + 1;
-                if won_number < scores.len() {
-                    scratchcard_counts[won_number] += cards_held;
-                }
+        let match_count = scores[scratchcard_number];
+
+        for i in 0..match_count {
+            let won_number = scratchcard_number + i + 1;
+            if won_number < scores.len() {
+                scratchcard_counts[won_number] += cards_held;
             }
         }
-
-        println!("Total Tickets: {}", ticket_count);
     }
+
+    ticket_count
 }
 
 fn get_card_matches(lines: &Vec<String>) -> Vec<usize> {
@@ -85,4 +80,21 @@ fn get_card_matches(lines: &Vec<String>) -> Vec<usize> {
     }
 
     return results;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_run_p1() {
+        let result = run_p1(crate::utils::read_input(4));
+        assert_eq!(result, 23441);
+    }
+
+    #[test]
+    fn test_run_p2() {
+        let result = run_p2(crate::utils::read_input(4));
+        assert_eq!(result, 5923918);
+    }
 }

@@ -1,71 +1,68 @@
 use rayon::prelude::*;
 use std::collections::VecDeque;
 
-use crate::DayRunner;
-
-pub struct Day5 {}
-
 pub struct Mapping {
     dest_range_start: i64,
     source_range_start: i64,
     range_length: i64,
 }
 
-impl DayRunner for Day5 {
-    fn run_p1(&self, lines: Vec<String>) {
-        let seeds = lines
-            .first()
-            .unwrap()
-            .replace("seeds:", "")
-            .trim()
-            .split(" ")
-            .map(|seed| seed.parse::<i64>().unwrap())
-            .collect::<Vec<_>>();
+#[allow(dead_code)]
+fn run_p1(lines: Vec<String>) -> i64 {
+    let seeds = lines
+        .first()
+        .unwrap()
+        .replace("seeds:", "")
+        .trim()
+        .split(" ")
+        .map(|seed| seed.parse::<i64>().unwrap())
+        .collect::<Vec<_>>();
 
-        let maps = read_maps(&lines);
+    let maps = read_maps(&lines);
 
-        let min = seeds
-            .iter()
-            .map(|seed| get_location(*seed, &maps))
+    let min = seeds
+        .iter()
+        .map(|seed| get_location(*seed, &maps))
+        .min()
+        .unwrap();
+
+    min
+}
+
+#[allow(dead_code)]
+fn run_p2(lines: Vec<String>) -> i64 {
+    let mut seeds_ranges = lines
+        .first()
+        .unwrap()
+        .replace("seeds:", "")
+        .trim()
+        .split(" ")
+        .map(|seed| seed.parse::<i64>().unwrap())
+        .collect::<VecDeque<_>>();
+
+    let maps = read_maps(&lines);
+
+    let _pairs: Vec<(i64, i64)> = Vec::new();
+    let mut min = i64::MAX;
+
+    while seeds_ranges.len() > 0 {
+        let range_1 = seeds_ranges.pop_front().unwrap();
+        let range_2 = seeds_ranges.pop_front().unwrap();
+
+        let new_min = (range_1..(range_2 + range_1))
+            .into_par_iter()
+            .map(|element| get_location(element, &maps))
             .min()
             .unwrap();
 
-        println!("Min: {}", min);
-    }
-
-    fn run_p2(&self, lines: Vec<String>) {
-        let mut seeds_ranges = lines
-            .first()
-            .unwrap()
-            .replace("seeds:", "")
-            .trim()
-            .split(" ")
-            .map(|seed| seed.parse::<i64>().unwrap())
-            .collect::<VecDeque<_>>();
-
-        let maps = read_maps(&lines);
-
-        let _pairs: Vec<(i64, i64)> = Vec::new();
-        let mut min = i64::MAX;
-
-        while seeds_ranges.len() > 0 {
-            let range_1 = seeds_ranges.pop_front().unwrap();
-            let range_2 = seeds_ranges.pop_front().unwrap();
-
-            let new_min = (range_1..(range_2 + range_1))
-                .into_par_iter()
-                .map(|element| get_location(element, &maps))
-                .min()
-                .unwrap();
-
-            if new_min < min {
-                min = new_min;
-            }
+        if new_min < min {
+            min = new_min;
         }
-
-        println!("Overall Min: {}", min);
     }
+
+    min
 }
+
 
 fn get_location(seed: i64, maps: &Vec<Vec<Mapping>>) -> i64 {
     let mut current_step = seed;
@@ -137,4 +134,21 @@ fn read_maps(lines: &Vec<String>) -> Vec<Vec<Mapping>> {
     }
 
     return maps;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_run_p1() {
+        let result = run_p1(crate::utils::read_input(5));
+        assert_eq!(result, 551761867);
+    }
+
+    #[test]
+    fn test_run_p2() {
+        let result = run_p2(crate::utils::read_input(5));
+        assert_eq!(result, 57451709);
+    }
 }
